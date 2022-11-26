@@ -2,10 +2,9 @@ import io
 import posixpath
 import zipfile
 import itertools
-import contextlib
 import pathlib
 
-from ._functools import save_method_args
+from ._functools import save_method_args, method_cache
 
 
 __all__ = ['Path']
@@ -136,17 +135,13 @@ class FastLookup(CompleteDirs):
     dirs exist and are resolved rapidly.
     """
 
+    @method_cache
     def namelist(self):
-        with contextlib.suppress(AttributeError):
-            return self.__names
-        self.__names = super(FastLookup, self).namelist()
-        return self.__names
+        return super(FastLookup, self).namelist()
 
+    @method_cache
     def _name_set(self):
-        with contextlib.suppress(AttributeError):
-            return self.__lookup
-        self.__lookup = super(FastLookup, self)._name_set()
-        return self.__lookup
+        return super(FastLookup, self)._name_set()
 
 
 class Path:
